@@ -3,7 +3,7 @@ RRT Docs - TODO: Complete me!
 """
 import numpy as np
 from shapely.geometry import LineString, Point, Polygon
-from src.utils.KDTree import KDTree
+from ..utils.KDTree import KDTree
 import matplotlib.pyplot as plt
 def Steer(x_random, x_nearest, d_max): 
     """
