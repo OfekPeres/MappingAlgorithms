@@ -7,3 +7,10 @@ __pycache__
 _build/
 _templates/
 src.rst
+
+src/__pycache__/
+
+_build/
+_templates/
+docs/
+.buildinfo
