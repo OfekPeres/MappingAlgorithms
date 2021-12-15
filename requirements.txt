@@ -1,6 +1,0 @@
-numpy 
-matplotlib
-shapely
-Sphinx
-sphinx_rtd_theme
-typing-extensions
