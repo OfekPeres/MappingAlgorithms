@@ -1,0 +1,10 @@
+__pycache__
+*.xlsx
+.vscode/
+.pytest_cache
+.DS_Store
+
+_build/
+_static/
+_templates/
+src.rst
