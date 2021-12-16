@@ -10,7 +10,9 @@ Welcome to src's documentation!
    :maxdepth: 4
    :caption: Contents:
 
-   src
+   src.continuous
+   src.discrete
+   src.utils
 
 
 Indices and tables

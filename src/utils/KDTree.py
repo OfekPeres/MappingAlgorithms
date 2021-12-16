@@ -1,3 +1,13 @@
+"""
+This class implements the KDTree data-structure which is an efficient organization
+of points in a k-dimensional space, where each level of the tree is split into 
+a hyperplane that divides the points into two partitions. 
+
+Allows functionality to insert points into the tree, return the points in order, 
+and returns the nearest neighbor of a point given another point. 
+
+"""
+
 from .KDTreeNode import KDTreeNode
 from typing import List, Text
 from pprint import pprint
@@ -5,6 +15,14 @@ from pprint import pprint
 import matplotlib.pyplot as plt
 
 class KDTree:
+    '''
+    Args: 
+        point (np.ndarray): 
+
+    Return:
+        An instance of the BangBang class
+
+    '''
     def __init__(self, point=(0, 0)):
         self.root = KDTreeNode(point, 0)
         self.TreeList = [self.root.node_to_dict()]
