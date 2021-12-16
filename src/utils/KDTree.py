@@ -17,10 +17,10 @@ import matplotlib.pyplot as plt
 class KDTree:
     '''
     Args: 
-        point (np.ndarray): 
+        point (np.ndarray): the starting point for the KD Tree
 
     Return:
-        An instance of the BangBang class
+        An instance of the KDTree class
 
     '''
     def __init__(self, point=(0, 0)):
@@ -28,9 +28,16 @@ class KDTree:
         self.TreeList = [self.root.node_to_dict()]
 
     def Insert(self, point):
-        '''
-        Inserts a new KDTreeNode into the KDTree thru an iterative approach
+        '''Inserts a new KDTreeNode into the KDTree thru an iterative approach
         returns the node that was created
+
+        Args: 
+            self (KDTree): a KDTree object
+            point (np.ndarray): the (k-dimensional) point to be inserted into the KDTree
+        
+        Return:
+            KDTreeNode: a KDTree node of the new point inserted
+
         '''
         depth = 0
         current_node = self.root
@@ -62,32 +69,55 @@ class KDTree:
         return new_node
 
     def __GetPointsInOrderTraversal(self, node, output_list: List):
-        """
-        Takes in a list to populate with all of the nodes in the tree in 
+        '''Takes in a list to populate with all of the nodes in the tree in 
         ascending order. This method recursively does in order traversal
-        """
+
+        Args: 
+            self (KDTree): a KDTree object
+            node (KDTreeNode): the start node for the recursive calls
+            output_list (List): to write in the points
+        
+        Return:
+            None 
+
+        '''
+
+        # base case
         if node is None:
             return
+        # keep going through tree and add in node to the output list
         self.__GetPointsInOrderTraversal(node.left, output_list)
         output_list.append(node)
         self.__GetPointsInOrderTraversal(node.right, output_list)
 
-
     def GetAllNodes(self):
-        """
-        Returns a list of all nodes in the tree using an In Order Traversal
-        """
+        '''Returns a list of all nodes in the tree using an In Order Traversal. Calls
+        __GetPointsInOrderTraversal. 
+
+        Args: 
+            self (KDTree): a KDTree object
+        
+        Return:
+            List: a list of nodes in the tree
+
+        '''
+
         nodes = []
         self.__GetPointsInOrderTraversal(self.root, nodes)
         return nodes
 
     def CloserKDTreeNode(self, target, p1: KDTreeNode, p2: KDTreeNode):
-        '''
-        Takes in
-        target: a k-dimensional point
-        p1, a tree node
-        p2, another tree node
-        returns the tree node closer to the point, None if both inputs are None
+        ''' Takes in target and returns the tree node closer to the point
+        
+        Args:
+            self (KDTree): a KDTree object
+            target (np.ndarray): a k-dimensional point
+            p1 (KDTreeNode): a tree node
+            p2 (KDtreeNode): another tree node
+
+        Returns: 
+            KDTreeNode: the tree node (p1 or p2) that is closest to the target
+        
         '''
         if p1 is None:
             return p2
@@ -103,6 +133,19 @@ class KDTree:
             return p2
 
     def __NearestNeighbor(self, root: KDTreeNode, point):
+        ''' Returns the KDTree node that is closest to a given point (private method
+        for recursion)
+        
+        Args:
+            self (KDTree): a KDTree object
+            root (KDTreeNode): the root of the KDTree
+            point (np.ndarray): the point that is being queried
+
+        Returns: 
+            KDTreeNode: the tree node in the KDTree that is closest to the target
+        
+        '''
+
         if root is None:
             return None
 
@@ -129,9 +172,30 @@ class KDTree:
                 point, self.__NearestNeighbor(opposite_branch, point), best)
 
         return best
+
     def NearestNeighbor(self, point):
+        ''' Returns the KDTree node that is closest to a given point (public method)
+        
+        Args:
+            self (KDTree): a KDTree object
+            point (np.ndarray): the point that is being queried
+
+        Returns: 
+            KDTreeNode: the tree node in the KDTree that is closest to the target
+        
+        '''
         return self.__NearestNeighbor(self.root, point)
+
     def GetTreeAsList(self):
+        ''' Returns the KDTree as a list
+        
+        Args:
+            self (KDTree): a KDTree object
+
+        Returns: 
+            List: return the points in the tree as a list
+
+        '''
         return self.TreeList
 
 
