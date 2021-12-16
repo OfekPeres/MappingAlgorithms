@@ -1,17 +1,26 @@
 """
-RRT Docs - TODO: Complete me!
+The RRT Class implemented the Rapidly Exploring Random Tree Algorithm. Given a start 
+goal, end goal and an environment map (with specified obstacle locations), we return 
+a collision free path from the start to the goal. This file contains the RRT object 
+as well as helper function to help compute the path
 """
 import numpy as np
 from shapely.geometry import LineString, Point, Polygon
 from ..utils.KDTree import KDTree
 import matplotlib.pyplot as plt
+
 def Steer(x_random, x_nearest, d_max): 
-    """
-    ### Moves towards x_random up to max distance d_max
-    x_random: randomly positioned point within the "map"
-    x_nearest: the current nearest point in the RRT
-    d_max: the "step" size from each node to node in RRT
-    """
+    '''Moves towards x_random upto max distance d_max 
+
+    Args: 
+        x_random (numpy array): randomly positioned point within the "map" (x,y)
+        x_nearest (numpy array): the current nearest point in the RRT (x,y)
+        d_max (float): the "step" size from each node to node in RRT
+    Returns: 
+        numpy array: A new point
+        
+    '''
+    
     distance = np.linalg.norm(x_random - x_nearest)
     if distance > d_max:
         direction = (x_random - x_nearest)/distance
@@ -20,12 +29,15 @@ def Steer(x_random, x_nearest, d_max):
         x_new = x_random; 
     return x_new
 
-
-
 def CreatePolygon(obstacle): 
-    """
-    ### Takes in square obs defined as [x_lower, y_lower, x_upper, y_upper] and returns a shapely polygon object
-    """
+    '''Takes in a square obstacle and returns a shapely polygon object 
+
+    Args: 
+        obstacle (list): square obstacle defined as [x_lower, y_lower, x_upper, y_upper]
+    Returns: 
+        Polygon: shapely polygon object
+        
+    '''
     p1 = (obstacle[0], obstacle[1])
     p2 = (obstacle[0], obstacle[3])
     p3 = (obstacle[2], obstacle[3])
@@ -34,9 +46,14 @@ def CreatePolygon(obstacle):
     return obs_polygon
 
 def IsCollision(x_new, x_nearest, obstacles, eps): 
-    """
-    ### Checks if adding the new point would cause a collision with an obstacle
-    """
+    '''Takes in a square obstacle and returns a shapely polygon object 
+
+    Args: 
+        obstacle (list): square obstacle defined as [x_lower, y_lower, x_upper, y_upper]
+    Returns: 
+        Polygon: shapely polygon object
+        
+    '''
     end = Point(x_new[0], x_new[1])
     start = Point(x_nearest[0], x_nearest[1])
     path = LineString([start, end])
@@ -65,18 +82,34 @@ def IsCollision(x_new, x_nearest, obstacles, eps):
     return False
 
 def GenRandomPoint(x_min = 0, x_max = 100, y_min = 0, y_max = 50):
-    """
-    Takes in the x bounds and then the y bounds for the "map" of the RRT 
-    @param x_min: the lower x bound of the map
-    @param x_max: the upper x bound of the map
-    @param y_min: the lower x bound of the map
-    @param y_max: the upper x bound of the map
-    @returns a random point within the bounds of the map
-    """
+    '''Given the bounds of the environment, generates a random point
+
+    Args: 
+        x_min: the lower x bound of the map
+        x_max: the upper x bound of the map
+        y_min: the lower x bound of the map
+        y_max: the upper x bound of the map
+    Returns: 
+        numpy array: a random point within the bounds of the map (x,y)
+        
+        '''
     x = np.random.uniform(x_min, x_max)
     y = np.random.uniform(y_min, y_max)
     return [x,y]
+
 class RRT:
+    '''RRT is an object that stores a 'payload' (specifying start node, goal node, 
+    obstacles) and then applies the RRT algorithm to produce a kdtree with the 
+    explored nodes and their parents. 
+
+    Args: 
+        payload (dictionary): contains the 'start', 'goal', 'goalRadius', 'obstacles', 
+                              'dmax' (distance between nodes), 'width' and 'height'
+                              (of environment)
+    Return:
+        An instance of the RRT class
+
+    '''
     def __init__(self, payload):
         start = np.array(payload['start'])
         goal = np.array(payload['goal'])
@@ -90,6 +123,7 @@ class RRT:
         goal = np.array(goal)
         dist_to_goal = np.linalg.norm(start - goal)
         eps = 0.5 # safety margin around obstacle
+        # RRT algorithm
         # Continue searching for points until arrival at goal area
         while dist_to_goal > goal_radius: 
             # generate a random point 
@@ -113,6 +147,16 @@ class RRT:
         self.goal_radius = goal_radius
     
     def PlotRRT(self):
+        '''Displays a plot of the RRT path which is useful for visualization and  
+        debugging. 
+
+        Args:
+            self: an RRT Object
+ 
+        Returns:
+            None
+
+        '''
         fig, ax = plt.subplots()
         ax.set_aspect('equal')
         pts = self.RRTPts
@@ -141,12 +185,23 @@ class RRT:
                 obstacle_circle = plt.Circle(obstacle['definition'][:2], obstacle['definition'][2], color='red')
                 ax.add_patch(obstacle_circle)
 
-        
         goal_circle = plt.Circle(self.goal, self.goal_radius, color='blue')
         ax.add_patch(goal_circle)
         
         plt.show()
+
     def GetRRTPayload(self):
+        '''Returns the path produced by the RRT
+
+        Args:
+            self: an RRT Object
+ 
+        Returns:
+            dictionary: a payload with the 'goal', 'goalRadius', 'obstacles', 
+                        'points' (the path produced by RRT as a list), 
+                        'targetNodeIndex' (list index of goal node)
+
+        '''
         payload = {}
         payload['goal'] = self.goal
         payload['goalRadius'] = self.goal_radius
