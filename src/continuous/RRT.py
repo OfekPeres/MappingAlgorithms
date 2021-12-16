@@ -47,12 +47,15 @@ def CreatePolygon(obstacle):
     return obs_polygon
 
 def IsCollision(x_new, x_nearest, obstacles, eps): 
-    '''Takes in a square obstacle and returns a shapely polygon object 
+    '''Checks whether a line segments connecting two points intersects an obstacle 
 
     Args: 
-        obstacle (list): square obstacle defined as [x_lower, y_lower, x_upper, y_upper]
+        x_new (list): the point that the tree wants to grow towards 
+        x_nearest (list): the start point on the tree
+        obstacles (list): square obstacle defined as [x_lower, y_lower, x_upper, y_upper]
+        eps (float): the factor to augment obstacles by (for safety)
     Returns: 
-        Polygon: shapely polygon object
+        Boolean: true if a collision is detected and false otherwise 
         
     '''
     end = Point(x_new[0], x_new[1])
@@ -101,7 +104,7 @@ def GenRandomPoint(x_min = 0, x_max = 100, y_min = 0, y_max = 50):
 class RRT:
     '''RRT is an object that stores a 'payload' (specifying start node, goal node, 
     obstacles) and then applies the RRT algorithm to produce a kdtree with the 
-    explored nodes and their parents. 
+    explored nodes and their parents.
 
     Args: 
         payload (dictionary): contains the 'start', 'goal', 'goalRadius', 'obstacles', 
@@ -111,6 +114,30 @@ class RRT:
 
     '''
     def __init__(self, payload):
+        # run RRT algorithm
+        kdtree, x_last = self.RunRRT(payload)
+        self.RRTTree = kdtree
+        self.RRTPts = kdtree.GetTreeAsList()
+        self.obstacles = payload['obstacles']
+        self.Target_Node = x_last
+        self.goal = payload['goal']
+        self.goal_radius = payload['goalRadius']
+
+    def RunRRT(self, payload): 
+        '''Runs the RRT algorithm given a payload containing the map, start and goal
+        nodes and step size  
+
+        Args:
+            self (RRT): an RRT Object
+            payload (dictionary): contains the 'start', 'goal', 'goalRadius', 'obstacles', 
+            'dmax' (distance between nodes), 'width' and 'height' (of environment)
+ 
+        Returns:
+            KDTree: a KDTree object with nodes corresponding to the points explored 
+            List: x_last - the last point explored on the RRT, indicating where the 
+            search terminated allowing the path to be backtracked. 
+
+        '''
         start = np.array(payload['start'])
         goal = np.array(payload['goal'])
         goal_radius =  payload['goalRadius']
@@ -123,7 +150,6 @@ class RRT:
         goal = np.array(goal)
         dist_to_goal = np.linalg.norm(start - goal)
         eps = 0.5 # safety margin around obstacle
-        # RRT algorithm
         # Continue searching for points until arrival at goal area
         while dist_to_goal > goal_radius: 
             # generate a random point 
@@ -139,12 +165,7 @@ class RRT:
             if not collision: 
                 x_last = kdtree.Insert(x_new)
                 dist_to_goal = np.linalg.norm(x_new - goal)
-        self.RRTTree = kdtree
-        self.RRTPts = kdtree.GetTreeAsList()
-        self.obstacles = obstacles
-        self.Target_Node = x_last
-        self.goal = goal
-        self.goal_radius = goal_radius
+        return kdtree, x_last
     
     def PlotRRT(self):
         '''Displays a plot of the RRT path which is useful for visualization and  
