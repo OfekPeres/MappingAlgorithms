@@ -3,6 +3,7 @@ The RRT Class implemented the Rapidly Exploring Random Tree Algorithm. Given a s
 goal, end goal and an environment map (with specified obstacle locations), we return 
 a collision free path from the start to the goal. This file contains the RRT object 
 as well as helper function to help compute the path
+
 """
 import numpy as np
 from shapely.geometry import LineString, Point, Polygon
@@ -104,8 +105,7 @@ class RRT:
 
     Args: 
         payload (dictionary): contains the 'start', 'goal', 'goalRadius', 'obstacles', 
-                              'dmax' (distance between nodes), 'width' and 'height'
-                              (of environment)
+        'dmax' (distance between nodes), 'width' and 'height' (of environment)
     Return:
         An instance of the RRT class
 
@@ -198,8 +198,8 @@ class RRT:
  
         Returns:
             dictionary: a payload with the 'goal', 'goalRadius', 'obstacles', 
-                        'points' (the path produced by RRT as a list), 
-                        'targetNodeIndex' (list index of goal node)
+            'points' (the path produced by RRT as a list), 
+            'targetNodeIndex' (list index of goal node)
 
         '''
         payload = {}

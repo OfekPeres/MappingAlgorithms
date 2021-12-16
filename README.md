@@ -17,3 +17,9 @@ From the docs/ directory, run:
 ```
 make html
 ```
+
+# Important Information 
+Use Python 3.9 and to install required packages use: 
+```
+pip install -r requirements.txt
+```

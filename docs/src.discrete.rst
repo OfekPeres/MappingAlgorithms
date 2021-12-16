@@ -1,8 +1,7 @@
-src.discrete package
+Discrete
 ====================
 
-Module contents
----------------
+
 
 .. automodule:: src.discrete
    :members:

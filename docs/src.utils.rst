@@ -1,10 +1,8 @@
-src.utils package
+Utilities
 =================
 
-Submodules
-----------
 
-src.utils.KDTree module
+KDTree
 -----------------------
 
 .. automodule:: src.utils.KDTree
@@ -12,16 +10,13 @@ src.utils.KDTree module
    :undoc-members:
    :show-inheritance:
 
-src.utils.KDTreeNode module
+KDTreeNode
 ---------------------------
 
 .. automodule:: src.utils.KDTreeNode
    :members:
    :undoc-members:
    :show-inheritance:
-
-Module contents
----------------
 
 .. automodule:: src.utils
    :members:
