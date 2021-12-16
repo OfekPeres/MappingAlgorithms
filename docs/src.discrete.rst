@@ -1,10 +1,10 @@
-discrete package
-================
+src.discrete package
+====================
 
 Module contents
 ---------------
 
-.. automodule:: discrete
+.. automodule:: src.discrete
    :members:
    :undoc-members:
    :show-inheritance:
