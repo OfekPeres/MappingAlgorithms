@@ -1,13 +1,13 @@
-continuous package
-==================
+src.continuous package
+======================
 
 Submodules
 ----------
 
-continuous.RRT module
----------------------
+src.continuous.RRT module
+-------------------------
 
-.. automodule:: continuous.RRT
+.. automodule:: src.continuous.RRT
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ continuous.RRT module
 Module contents
 ---------------
 
-.. automodule:: continuous
+.. automodule:: src.continuous
    :members:
    :undoc-members:
    :show-inheritance:
