@@ -118,12 +118,15 @@
     <span class="k">return</span> <span class="n">obs_polygon</span></div>
 
 <div class="viewcode-block" id="IsCollision"><a class="viewcode-back" href="../../../src.continuous.html#src.continuous.RRT.IsCollision">[docs]</a><span class="k">def</span> <span class="nf">IsCollision</span><span class="p">(</span><span class="n">x_new</span><span class="p">,</span> <span class="n">x_nearest</span><span class="p">,</span> <span class="n">obstacles</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span> 
-    <span class="sd">&#39;&#39;&#39;Takes in a square obstacle and returns a shapely polygon object </span>
+    <span class="sd">&#39;&#39;&#39;Checks whether a line segments connecting two points intersects an obstacle </span>
 
 <span class="sd">    Args: </span>
-<span class="sd">        obstacle (list): square obstacle defined as [x_lower, y_lower, x_upper, y_upper]</span>
+<span class="sd">        x_new (list): the point that the tree wants to grow towards </span>
+<span class="sd">        x_nearest (list): the start point on the tree</span>
+<span class="sd">        obstacles (list): square obstacle defined as [x_lower, y_lower, x_upper, y_upper]</span>
+<span class="sd">        eps (float): the factor to augment obstacles by (for safety)</span>
 <span class="sd">    Returns: </span>
-<span class="sd">        Polygon: shapely polygon object</span>
+<span class="sd">        Boolean: true if a collision is detected and false otherwise </span>
 <span class="sd">        </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">x_new</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_new</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -172,7 +175,7 @@
 <div class="viewcode-block" id="RRT"><a class="viewcode-back" href="../../../src.continuous.html#src.continuous.RRT.RRT">[docs]</a><span class="k">class</span> <span class="nc">RRT</span><span class="p">:</span>
     <span class="sd">&#39;&#39;&#39;RRT is an object that stores a &#39;payload&#39; (specifying start node, goal node, </span>
 <span class="sd">    obstacles) and then applies the RRT algorithm to produce a kdtree with the </span>
-<span class="sd">    explored nodes and their parents. </span>
+<span class="sd">    explored nodes and their parents.</span>
 
 <span class="sd">    Args: </span>
 <span class="sd">        payload (dictionary): contains the &#39;start&#39;, &#39;goal&#39;, &#39;goalRadius&#39;, &#39;obstacles&#39;, </span>
@@ -182,6 +185,30 @@
 
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="c1"># run RRT algorithm</span>
+        <span class="n">kdtree</span><span class="p">,</span> <span class="n">x_last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RunRRT</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RRTTree</span> <span class="o">=</span> <span class="n">kdtree</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RRTPts</span> <span class="o">=</span> <span class="n">kdtree</span><span class="o">.</span><span class="n">GetTreeAsList</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;obstacles&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Target_Node</span> <span class="o">=</span> <span class="n">x_last</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goal_radius</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;goalRadius&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="RRT.RunRRT"><a class="viewcode-back" href="../../../src.continuous.html#src.continuous.RRT.RRT.RunRRT">[docs]</a>    <span class="k">def</span> <span class="nf">RunRRT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span> 
+        <span class="sd">&#39;&#39;&#39;Runs the RRT algorithm given a payload containing the map, start and goal</span>
+<span class="sd">        nodes and step size  </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            self (RRT): an RRT Object</span>
+<span class="sd">            payload (dictionary): contains the &#39;start&#39;, &#39;goal&#39;, &#39;goalRadius&#39;, &#39;obstacles&#39;, </span>
+<span class="sd">            &#39;dmax&#39; (distance between nodes), &#39;width&#39; and &#39;height&#39; (of environment)</span>
+<span class="sd"> </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            KDTree: a KDTree object with nodes corresponding to the points explored </span>
+<span class="sd">            List: x_last - the last point explored on the RRT, indicating where the </span>
+<span class="sd">            search terminated allowing the path to be backtracked. </span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">])</span>
         <span class="n">goal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">])</span>
         <span class="n">goal_radius</span> <span class="o">=</span>  <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;goalRadius&#39;</span><span class="p">]</span>
@@ -194,7 +221,6 @@
         <span class="n">goal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span>
         <span class="n">dist_to_goal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">start</span> <span class="o">-</span> <span class="n">goal</span><span class="p">)</span>
         <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c1"># safety margin around obstacle</span>
-        <span class="c1"># RRT algorithm</span>
         <span class="c1"># Continue searching for points until arrival at goal area</span>
         <span class="k">while</span> <span class="n">dist_to_goal</span> <span class="o">&gt;</span> <span class="n">goal_radius</span><span class="p">:</span> 
             <span class="c1"># generate a random point </span>
@@ -210,12 +236,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">collision</span><span class="p">:</span> 
                 <span class="n">x_last</span> <span class="o">=</span> <span class="n">kdtree</span><span class="o">.</span><span class="n">Insert</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
                 <span class="n">dist_to_goal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x_new</span> <span class="o">-</span> <span class="n">goal</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">RRTTree</span> <span class="o">=</span> <span class="n">kdtree</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">RRTPts</span> <span class="o">=</span> <span class="n">kdtree</span><span class="o">.</span><span class="n">GetTreeAsList</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">obstacles</span> <span class="o">=</span> <span class="n">obstacles</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Target_Node</span> <span class="o">=</span> <span class="n">x_last</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="n">goal</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">goal_radius</span> <span class="o">=</span> <span class="n">goal_radius</span>
+        <span class="k">return</span> <span class="n">kdtree</span><span class="p">,</span> <span class="n">x_last</span></div>
     
 <div class="viewcode-block" id="RRT.PlotRRT"><a class="viewcode-back" href="../../../src.continuous.html#src.continuous.RRT.RRT.PlotRRT">[docs]</a>    <span class="k">def</span> <span class="nf">PlotRRT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Displays a plot of the RRT path which is useful for visualization and  </span>

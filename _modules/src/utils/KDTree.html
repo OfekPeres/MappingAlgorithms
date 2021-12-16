@@ -88,10 +88,10 @@
 <div class="viewcode-block" id="KDTree"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTree.KDTree">[docs]</a><span class="k">class</span> <span class="nc">KDTree</span><span class="p">:</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Args: </span>
-<span class="sd">        point (np.ndarray): </span>
+<span class="sd">        point (np.ndarray): the starting point for the KD Tree</span>
 
 <span class="sd">    Return:</span>
-<span class="sd">        An instance of the BangBang class</span>
+<span class="sd">        An instance of the KDTree class</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
@@ -99,9 +99,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">TreeList</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">node_to_dict</span><span class="p">()]</span>
 
 <div class="viewcode-block" id="KDTree.Insert"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTree.KDTree.Insert">[docs]</a>    <span class="k">def</span> <span class="nf">Insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Inserts a new KDTreeNode into the KDTree thru an iterative approach</span>
+        <span class="sd">&#39;&#39;&#39;Inserts a new KDTreeNode into the KDTree thru an iterative approach</span>
 <span class="sd">        returns the node that was created</span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTree): a KDTree object</span>
+<span class="sd">            point (np.ndarray): the (k-dimensional) point to be inserted into the KDTree</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            KDTreeNode: a KDTree node of the new point inserted</span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">current_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
@@ -133,32 +140,55 @@
         <span class="k">return</span> <span class="n">new_node</span></div>
 
     <span class="k">def</span> <span class="nf">__GetPointsInOrderTraversal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">output_list</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Takes in a list to populate with all of the nodes in the tree in </span>
+        <span class="sd">&#39;&#39;&#39;Takes in a list to populate with all of the nodes in the tree in </span>
 <span class="sd">        ascending order. This method recursively does in order traversal</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTree): a KDTree object</span>
+<span class="sd">            node (KDTreeNode): the start node for the recursive calls</span>
+<span class="sd">            output_list (List): to write in the points</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            None </span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1"># base case</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
+        <span class="c1"># keep going through tree and add in node to the output list</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__GetPointsInOrderTraversal</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">output_list</span><span class="p">)</span>
         <span class="n">output_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__GetPointsInOrderTraversal</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">output_list</span><span class="p">)</span>
 
-
 <div class="viewcode-block" id="KDTree.GetAllNodes"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTree.KDTree.GetAllNodes">[docs]</a>    <span class="k">def</span> <span class="nf">GetAllNodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a list of all nodes in the tree using an In Order Traversal</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&#39;&#39;&#39;Returns a list of all nodes in the tree using an In Order Traversal. Calls</span>
+<span class="sd">        __GetPointsInOrderTraversal. </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTree): a KDTree object</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            List: a list of nodes in the tree</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__GetPointsInOrderTraversal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">nodes</span></div>
 
 <div class="viewcode-block" id="KDTree.CloserKDTreeNode"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTree.KDTree.CloserKDTreeNode">[docs]</a>    <span class="k">def</span> <span class="nf">CloserKDTreeNode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">p1</span><span class="p">:</span> <span class="n">KDTreeNode</span><span class="p">,</span> <span class="n">p2</span><span class="p">:</span> <span class="n">KDTreeNode</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Takes in</span>
-<span class="sd">        target: a k-dimensional point</span>
-<span class="sd">        p1, a tree node</span>
-<span class="sd">        p2, another tree node</span>
-<span class="sd">        returns the tree node closer to the point, None if both inputs are None</span>
+        <span class="sd">&#39;&#39;&#39; Takes in target and returns the tree node closer to the point</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            self (KDTree): a KDTree object</span>
+<span class="sd">            target (np.ndarray): a k-dimensional point</span>
+<span class="sd">            p1 (KDTreeNode): a tree node</span>
+<span class="sd">            p2 (KDtreeNode): another tree node</span>
+
+<span class="sd">        Returns: </span>
+<span class="sd">            KDTreeNode: the tree node (p1 or p2) that is closest to the target</span>
+<span class="sd">        </span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">p2</span>
@@ -174,6 +204,19 @@
             <span class="k">return</span> <span class="n">p2</span></div>
 
     <span class="k">def</span> <span class="nf">__NearestNeighbor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">KDTreeNode</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Returns the KDTree node that is closest to a given point (private method</span>
+<span class="sd">        for recursion)</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            self (KDTree): a KDTree object</span>
+<span class="sd">            root (KDTreeNode): the root of the KDTree</span>
+<span class="sd">            point (np.ndarray): the point that is being queried</span>
+
+<span class="sd">        Returns: </span>
+<span class="sd">            KDTreeNode: the tree node in the KDTree that is closest to the target</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -200,9 +243,30 @@
                 <span class="n">point</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__NearestNeighbor</span><span class="p">(</span><span class="n">opposite_branch</span><span class="p">,</span> <span class="n">point</span><span class="p">),</span> <span class="n">best</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">best</span>
+
 <div class="viewcode-block" id="KDTree.NearestNeighbor"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTree.KDTree.NearestNeighbor">[docs]</a>    <span class="k">def</span> <span class="nf">NearestNeighbor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Returns the KDTree node that is closest to a given point (public method)</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            self (KDTree): a KDTree object</span>
+<span class="sd">            point (np.ndarray): the point that is being queried</span>
+
+<span class="sd">        Returns: </span>
+<span class="sd">            KDTreeNode: the tree node in the KDTree that is closest to the target</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__NearestNeighbor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="KDTree.GetTreeAsList"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTree.KDTree.GetTreeAsList">[docs]</a>    <span class="k">def</span> <span class="nf">GetTreeAsList</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Returns the KDTree as a list</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            self (KDTree): a KDTree object</span>
+
+<span class="sd">        Returns: </span>
+<span class="sd">            List: return the points in the tree as a list</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">TreeList</span></div></div>
 
 

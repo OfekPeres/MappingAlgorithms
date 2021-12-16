@@ -89,95 +89,270 @@ and returns the nearest neighbor of a point given another point.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>point</strong> (<em>np.ndarray</em>) – </p>
+<dd class="field-odd"><p><strong>point</strong> (<em>np.ndarray</em>) – the starting point for the KD Tree</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An instance of the BangBang class</p>
+<dd class="field-even"><p>An instance of the KDTree class</p>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTree.KDTree.CloserKDTreeNode">
 <span class="sig-name descname"><span class="pre">CloserKDTreeNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode"><span class="pre">src.utils.KDTreeNode.KDTreeNode</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode"><span class="pre">src.utils.KDTreeNode.KDTreeNode</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTree.html#KDTree.CloserKDTreeNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTree.KDTree.CloserKDTreeNode" title="Permalink to this definition"></a></dt>
-<dd><p>Takes in
-target: a k-dimensional point
-p1, a tree node
-p2, another tree node
-returns the tree node closer to the point, None if both inputs are None</p>
+<dd><p>Takes in target and returns the tree node closer to the point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTree.KDTree" title="src.utils.KDTree.KDTree"><em>KDTree</em></a>) – a KDTree object</p></li>
+<li><p><strong>target</strong> (<em>np.ndarray</em>) – a k-dimensional point</p></li>
+<li><p><strong>p1</strong> (<a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode"><em>KDTreeNode</em></a>) – a tree node</p></li>
+<li><p><strong>p2</strong> (<em>KDtreeNode</em>) – another tree node</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the tree node (p1 or p2) that is closest to the target</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode">KDTreeNode</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTree.KDTree.GetAllNodes">
 <span class="sig-name descname"><span class="pre">GetAllNodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTree.html#KDTree.GetAllNodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTree.KDTree.GetAllNodes" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a list of all nodes in the tree using an In Order Traversal</p>
+<dd><p>Returns a list of all nodes in the tree using an In Order Traversal. Calls
+__GetPointsInOrderTraversal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTree.KDTree" title="src.utils.KDTree.KDTree"><em>KDTree</em></a>) – a KDTree object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list of nodes in the tree</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTree.KDTree.GetTreeAsList">
 <span class="sig-name descname"><span class="pre">GetTreeAsList</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTree.html#KDTree.GetTreeAsList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTree.KDTree.GetTreeAsList" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Returns the KDTree as a list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTree.KDTree" title="src.utils.KDTree.KDTree"><em>KDTree</em></a>) – a KDTree object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return the points in the tree as a list</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTree.KDTree.Insert">
 <span class="sig-name descname"><span class="pre">Insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTree.html#KDTree.Insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTree.KDTree.Insert" title="Permalink to this definition"></a></dt>
 <dd><p>Inserts a new KDTreeNode into the KDTree thru an iterative approach
 returns the node that was created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTree.KDTree" title="src.utils.KDTree.KDTree"><em>KDTree</em></a>) – a KDTree object</p></li>
+<li><p><strong>point</strong> (<em>np.ndarray</em>) – the (k-dimensional) point to be inserted into the KDTree</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a KDTree node of the new point inserted</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode">KDTreeNode</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTree.KDTree.NearestNeighbor">
 <span class="sig-name descname"><span class="pre">NearestNeighbor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTree.html#KDTree.NearestNeighbor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTree.KDTree.NearestNeighbor" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Returns the KDTree node that is closest to a given point (public method)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTree.KDTree" title="src.utils.KDTree.KDTree"><em>KDTree</em></a>) – a KDTree object</p></li>
+<li><p><strong>point</strong> (<em>np.ndarray</em>) – the point that is being queried</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the tree node in the KDTree that is closest to the target</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode">KDTreeNode</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-src.utils.KDTreeNode">
 <span id="kdtreenode"></span><h2>KDTreeNode<a class="headerlink" href="#module-src.utils.KDTreeNode" title="Permalink to this headline"></a></h2>
+<p>This class implements a KDTreeNode data-structure which is the data-structure of
+nodes in the KDTree class.</p>
+<p>Helper functions in this class can return the distance to another node, distance to
+the splitting hyperplane, comparisons (and operators) between nodes.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.utils.KDTreeNode.KDTreeNode">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.utils.KDTreeNode.</span></span><span class="sig-name descname"><span class="pre">KDTreeNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([0,</span> <span class="pre">0])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTreeNode.html#KDTreeNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTreeNode.KDTreeNode" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point</strong> (<em>np.ndarray</em>) – the position of the node (x,y)</p></li>
+<li><p><strong>depth</strong> (<em>integer</em>) – the depth of the node in the tree</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An instance of the KDTreeNode class</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode">KDTreeNode</a></p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTreeNode.KDTreeNode.compare_to_point">
 <span class="sig-name descname"><span class="pre">compare_to_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTreeNode.html#KDTreeNode.compare_to_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTreeNode.KDTreeNode.compare_to_point" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Computes the difference between the point’s value on the splitting axis
+and the current nodes value on that splitting axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode"><em>KDTreeNode</em></a>) – a KDTreeNode object</p></li>
+<li><p><strong>other</strong> (<em>np.ndarray</em>) – the point we want to compare to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>difference in values between self and other on a particular axis</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTreeNode.KDTreeNode.distance_to_node">
 <span class="sig-name descname"><span class="pre">distance_to_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTreeNode.html#KDTreeNode.distance_to_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTreeNode.KDTreeNode.distance_to_node" title="Permalink to this definition"></a></dt>
-<dd><p>returns the distance between the current node and the input node</p>
+<dd><p>Returns the distance between the current node and the input node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode"><em>KDTreeNode</em></a>) – a KDTreeNode object</p></li>
+<li><p><strong>other</strong> (<a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode"><em>KDTreeNode</em></a>) – the KDTreeNode object we want to find the distance to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the euclidean distance between the two nodes</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTreeNode.KDTreeNode.distance_to_point">
 <span class="sig-name descname"><span class="pre">distance_to_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTreeNode.html#KDTreeNode.distance_to_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTreeNode.KDTreeNode.distance_to_point" title="Permalink to this definition"></a></dt>
-<dd><p>returns the distance between the current node and the input point
-(array)</p>
+<dd><p>Returns the distance between the current node and the input node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode"><em>KDTreeNode</em></a>) – a KDTreeNode object</p></li>
+<li><p><strong>other</strong> (<em>np.ndarray</em>) – the point we want to find the distance to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the euclidean distance between the node and the point</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTreeNode.KDTreeNode.distance_to_splitting_plane">
 <span class="sig-name descname"><span class="pre">distance_to_splitting_plane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTreeNode.html#KDTreeNode.distance_to_splitting_plane"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTreeNode.KDTreeNode.distance_to_splitting_plane" title="Permalink to this definition"></a></dt>
-<dd><p>returns the distance between the current node’s splitting axis
-and the input points value at that axis.
-i.e. if the splitting plane is the x axis, compare the node’s x value
-to the point’s x value</p>
+<dd><p>Returns the distance between the current node’s splitting axis
+and the input points value at that axis, i.e., if the splitting plane is
+the x axis, compare the node’s x value to the point’s x value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode"><em>KDTreeNode</em></a>) – a KDTreeNode object</p></li>
+<li><p><strong>other</strong> (<em>np.ndarray</em>) – the point we want to find the distance to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the euclidean distance between the point and the splitting axis</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTreeNode.KDTreeNode.node_to_dict">
 <span class="sig-name descname"><span class="pre">node_to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTreeNode.html#KDTreeNode.node_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTreeNode.KDTreeNode.node_to_dict" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Returns a dictionary representation of a KDTree Node object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode"><em>KDTreeNode</em></a>) – a KDTreeNode object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>returns the x position, y position and parent of the KDTreeNode
+in a dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dictionary</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTreeNode.KDTreeNode.set_depth">
 <span class="sig-name descname"><span class="pre">set_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTreeNode.html#KDTreeNode.set_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTreeNode.KDTreeNode.set_depth" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Sets the depth of the node in the tree to the desired depth</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTree.KDTree" title="src.utils.KDTree.KDTree"><em>KDTree</em></a>) – a KDTree object</p></li>
+<li><p><strong>depth</strong> (<em>integer</em>) – desired tree depth</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.utils.KDTreeNode.KDTreeNode.set_goal_path">
 <span class="sig-name descname"><span class="pre">set_goal_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/KDTreeNode.html#KDTreeNode.set_goal_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.KDTreeNode.KDTreeNode.set_goal_path" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Computes the path from self to every parent until root. This is called on
+the goal node to return the path to the goal. It sets every node on the path
+as being a part of the Goal Path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>self</strong> (<a class="reference internal" href="#src.utils.KDTreeNode.KDTreeNode" title="src.utils.KDTreeNode.KDTreeNode"><em>KDTreeNode</em></a>) – a KDTreeNode object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
