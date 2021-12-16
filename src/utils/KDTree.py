@@ -90,7 +90,6 @@ class KDTree:
         output_list.append(node)
         self.__GetPointsInOrderTraversal(node.right, output_list)
 
-
     def GetAllNodes(self):
         '''Returns a list of all nodes in the tree using an In Order Traversal. Calls
         __GetPointsInOrderTraversal. 
@@ -188,6 +187,15 @@ class KDTree:
         return self.__NearestNeighbor(self.root, point)
 
     def GetTreeAsList(self):
+        ''' Returns the KDTree as a list
+        
+        Args:
+            self (KDTree): a KDTree object
+
+        Returns: 
+            List: return the points in the tree as a list
+
+        '''
         return self.TreeList
 
 
