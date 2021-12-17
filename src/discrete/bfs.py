@@ -262,7 +262,7 @@ class BFS:
             else: 
                 index = visited_order.index(parent)
 
-            point = {'x': pt[0], 'y': pt[1], 'parentIndex': index}
+            point = {'x': pt[0]*step_size, 'y': pt[1]*step_size, 'parentIndex': index}
             points_list.append(point)
 
         self.points_list = points_list
