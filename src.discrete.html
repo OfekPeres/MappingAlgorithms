@@ -43,7 +43,10 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="src.continuous.html">Continuous</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Discrete</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Discrete</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-src.discrete.bfs">BFS</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="src.utils.html">Utilities</a></li>
 </ul>
 
@@ -71,8 +74,153 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-src.discrete">
-<span id="discrete"></span><h1>Discrete<a class="headerlink" href="#module-src.discrete" title="Permalink to this headline"></a></h1>
+  <section id="discrete">
+<h1>Discrete<a class="headerlink" href="#discrete" title="Permalink to this headline"></a></h1>
+<section id="module-src.discrete.bfs">
+<span id="bfs"></span><h2>BFS<a class="headerlink" href="#module-src.discrete.bfs" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.discrete.bfs.BFS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.discrete.bfs.</span></span><span class="sig-name descname"><span class="pre">BFS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/discrete/bfs.html#BFS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.discrete.bfs.BFS" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing a BFS path-finding algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>payload</strong> – input payload</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An instance of the BFS Class</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bfs (<a class="reference internal" href="#src.discrete.bfs.BFS" title="src.discrete.bfs.BFS">BFS</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.discrete.bfs.Node">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.discrete.bfs.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/discrete/bfs.html#Node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.discrete.bfs.Node" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing a point in the BFS grid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em>) – x coordinate of grid point</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – y coordinate of grid point</p></li>
+<li><p><strong>parent</strong> (<em>list</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – [x,y] point of parent node</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An instance of the Node class</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#src.discrete.bfs.Node" title="src.discrete.bfs.Node">Node</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.discrete.bfs.get_neighbours">
+<span class="sig-prename descclassname"><span class="pre">src.discrete.bfs.</span></span><span class="sig-name descname"><span class="pre">get_neighbours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/discrete/bfs.html#get_neighbours"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.discrete.bfs.get_neighbours" title="Permalink to this definition"></a></dt>
+<dd><p>Get neighbouring Nodes for a N,E,S,W grid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node</strong> (<a class="reference internal" href="#src.discrete.bfs.Node" title="src.discrete.bfs.Node"><em>Node</em></a>) – input Node</p></li>
+<li><p><strong>parents</strong> (<em>numpy array</em>) – ndarray showing parents of points in bfs grid</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.discrete.bfs.get_path_from_goal">
+<span class="sig-prename descclassname"><span class="pre">src.discrete.bfs.</span></span><span class="sig-name descname"><span class="pre">get_path_from_goal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/discrete/bfs.html#get_path_from_goal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.discrete.bfs.get_path_from_goal" title="Permalink to this definition"></a></dt>
+<dd><p>Gets bfs path from goal point to the start point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gx</strong> (<em>int</em>) – x coordiante of goal point</p></li>
+<li><p><strong>gy</strong> (<em>int</em>) – y coordiante of goal point</p></li>
+<li><p><strong>parent_grid</strong> (<em>numpy array</em>) – grid showing parents of each point</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of coordinates along path from goal to start</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>path (list[list])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.discrete.bfs.in_window">
+<span class="sig-prename descclassname"><span class="pre">src.discrete.bfs.</span></span><span class="sig-name descname"><span class="pre">in_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_height</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/discrete/bfs.html#in_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.discrete.bfs.in_window" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if a point, (x,y), is in the defined window</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em>) – x coordinate of point</p></li>
+<li><p><strong>y</strong> (<em>int</em>) – y coordinate of point</p></li>
+<li><p><strong>window_width</strong> (<em>int</em>) – window’s size in the x direction</p></li>
+<li><p><strong>window_height</strong> (<em>int</em>) – window’s size in the y direction</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool variable showing if the point (x,y) is in the window</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.discrete.bfs.mark_points_in_Circle">
+<span class="sig-prename descclassname"><span class="pre">src.discrete.bfs.</span></span><span class="sig-name descname"><span class="pre">mark_points_in_Circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/discrete/bfs.html#mark_points_in_Circle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.discrete.bfs.mark_points_in_Circle" title="Permalink to this definition"></a></dt>
+<dd><p>Marks points contained within a Circle on a bfs grid as True</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>numpy array</em>) – input grid to be marked</p></li>
+<li><p><strong>cx</strong> (<em>int</em>) – x coordinate of the circle’s centre</p></li>
+<li><p><strong>cy</strong> (<em>int</em>) – y coordinate of the circle’s centre</p></li>
+<li><p><strong>r</strong> (<em>int</em>) – circle radius</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>updated grid</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>grid (numpy array)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.discrete.bfs.mark_points_in_Rectangle">
+<span class="sig-prename descclassname"><span class="pre">src.discrete.bfs.</span></span><span class="sig-name descname"><span class="pre">mark_points_in_Rectangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rx1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ry1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rx2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ry2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/discrete/bfs.html#mark_points_in_Rectangle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.discrete.bfs.mark_points_in_Rectangle" title="Permalink to this definition"></a></dt>
+<dd><p>Marks points contained within a Rectangle on a bfs grid as True</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> (<em>numpy array</em>) – input grid to be marked</p></li>
+<li><p><strong>rx1</strong> (<em>int</em>) – x coordinate of first point defining a rectangle</p></li>
+<li><p><strong>ry1</strong> (<em>int</em>) – y coordinate of first point defining a rectangle</p></li>
+<li><p><strong>rx2</strong> (<em>int</em>) – x coordinate of second point defining a rectangle</p></li>
+<li><p><strong>ry2</strong> (<em>int</em>) – y coordinate of second point defining a rectangle</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>updated grid</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>grid (numpy array)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-src.discrete"></span></section>
 </section>
 
 

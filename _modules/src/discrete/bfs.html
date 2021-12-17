@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.discrete.bfs &mdash; Mapping Algorithms 0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Mapping Algorithms
+          </a>
+              <div class="version">
+                0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../src.continuous.html">Continuous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src.discrete.html">Discrete</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src.utils.html">Utilities</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Mapping Algorithms</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>src.discrete.bfs</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.discrete.bfs</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">LineString</span><span class="p">,</span> <span class="n">Point</span><span class="p">,</span> <span class="n">Polygon</span>
+
+<div class="viewcode-block" id="Node"><a class="viewcode-back" href="../../../src.discrete.html#src.discrete.bfs.Node">[docs]</a><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span> 
+    <span class="sd">&#39;&#39;&#39;Class representing a point in the BFS grid</span>
+
+<span class="sd">    Args: </span>
+<span class="sd">        x (int): x coordinate of grid point </span>
+<span class="sd">        y (int): y coordinate of grid point</span>
+<span class="sd">        parent (list[int, int]): [x,y] point of parent node</span>
+<span class="sd">    Returns: </span>
+<span class="sd">        Node: An instance of the Node class </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span> <span class="c1"># coordinates of parent node or -1 if start, -2 if goal</span></div>
+
+<div class="viewcode-block" id="in_window"><a class="viewcode-back" href="../../../src.discrete.html#src.discrete.bfs.in_window">[docs]</a><span class="k">def</span> <span class="nf">in_window</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">window_width</span><span class="p">,</span> <span class="n">window_height</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Checks if a point, (x,y), is in the defined window</span>
+
+<span class="sd">    Args: </span>
+<span class="sd">        x (int): x coordinate of point</span>
+<span class="sd">        y (int): y coordinate of point</span>
+<span class="sd">        window_width (int): window&#39;s size in the x direction</span>
+<span class="sd">        window_height (int): window&#39;s size in the y direction</span>
+<span class="sd">    Returns: </span>
+<span class="sd">        bool: bool variable showing if the point (x,y) is in the window</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">window_width</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">window_height</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="get_neighbours"><a class="viewcode-back" href="../../../src.discrete.html#src.discrete.bfs.get_neighbours">[docs]</a><span class="k">def</span> <span class="nf">get_neighbours</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">parents</span><span class="p">):</span> 
+    <span class="sd">&#39;&#39;&#39;Get neighbouring Nodes for a N,E,S,W grid</span>
+
+<span class="sd">    Args: </span>
+<span class="sd">        node (Node): input Node </span>
+<span class="sd">        parents (numpy array): ndarray showing parents of points in bfs grid</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span> <span class="c1"># N E S W grid </span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span> 
+    
+    <span class="n">neighbours</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">:</span> 
+        <span class="c1"># Check in bounds </span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">in_window</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">+</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">parents</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parents</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">parents</span><span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">+</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="k">continue</span>
+
+        <span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">+</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+        <span class="n">neighbours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">neighbours</span></div>
+
+<div class="viewcode-block" id="mark_points_in_Circle"><a class="viewcode-back" href="../../../src.discrete.html#src.discrete.bfs.mark_points_in_Circle">[docs]</a><span class="k">def</span> <span class="nf">mark_points_in_Circle</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Marks points contained within a Circle on a bfs grid as True</span>
+
+<span class="sd">    Args: </span>
+<span class="sd">        grid (numpy array): input grid to be marked </span>
+<span class="sd">        cx (int): x coordinate of the circle&#39;s centre</span>
+<span class="sd">        cy (int): y coordinate of the circle&#39;s centre</span>
+<span class="sd">        r (int): circle radius</span>
+<span class="sd">    Returns: </span>
+<span class="sd">        grid (numpy array): updated grid </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cx</span> <span class="o">-</span> <span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cx</span> <span class="o">+</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cy</span> <span class="o">-</span> <span class="n">r</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">,</span> <span class="n">cy</span> <span class="o">+</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
+
+            <span class="c1"># Check in bounds </span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_window</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="p">(((</span><span class="n">i</span><span class="o">-</span><span class="n">cx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="n">cy</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">):</span>
+                <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+    <span class="k">return</span> <span class="n">grid</span></div>
+
+<div class="viewcode-block" id="mark_points_in_Rectangle"><a class="viewcode-back" href="../../../src.discrete.html#src.discrete.bfs.mark_points_in_Rectangle">[docs]</a><span class="k">def</span> <span class="nf">mark_points_in_Rectangle</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">rx1</span><span class="p">,</span> <span class="n">ry1</span><span class="p">,</span> <span class="n">rx2</span><span class="p">,</span> <span class="n">ry2</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Marks points contained within a Rectangle on a bfs grid as True</span>
+
+<span class="sd">    Args: </span>
+<span class="sd">        grid (numpy array): input grid to be marked </span>
+<span class="sd">        rx1 (int): x coordinate of first point defining a rectangle</span>
+<span class="sd">        ry1 (int): y coordinate of first point defining a rectangle</span>
+<span class="sd">        rx2 (int): x coordinate of second point defining a rectangle</span>
+<span class="sd">        ry2 (int): y coordinate of second point defining a rectangle</span>
+<span class="sd">    Returns: </span>
+<span class="sd">        grid (numpy array): updated grid </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rx1</span><span class="p">,</span> <span class="n">rx2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span> 
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ry1</span><span class="p">,</span> <span class="n">ry2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+
+            <span class="c1"># Check in bounds </span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_window</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="k">continue</span>
+            
+            <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="k">return</span> <span class="n">grid</span></div>
+
+<div class="viewcode-block" id="get_path_from_goal"><a class="viewcode-back" href="../../../src.discrete.html#src.discrete.bfs.get_path_from_goal">[docs]</a><span class="k">def</span> <span class="nf">get_path_from_goal</span><span class="p">(</span><span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">parent_grid</span><span class="p">):</span> 
+    <span class="sd">&#39;&#39;&#39;Gets bfs path from goal point to the start point </span>
+
+<span class="sd">    Args: </span>
+<span class="sd">        gx (int): x coordiante of goal point </span>
+<span class="sd">        gy (int): y coordiante of goal point </span>
+<span class="sd">        parent_grid (numpy array): grid showing parents of each point</span>
+<span class="sd">    Returns: </span>
+<span class="sd">        path (list[list]): List of coordinates along path from goal to start</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">parent_grid</span><span class="p">[</span><span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">]</span>
+
+    <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">gx</span><span class="p">,</span><span class="n">gy</span><span class="p">])</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="o">==</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">break</span> 
+        <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">parent_grid</span><span class="p">[</span><span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parent</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">path</span>
+
+    <span class="c1"># Make format match rrt </span>
+
+    <span class="c1"># Use list of dictionaries </span>
+    <span class="n">ret_path</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span> 
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">parent_grid</span><span class="p">[</span><span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="n">parent</span> <span class="o">==</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> 
+            <span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">index</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="n">point</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;parentIndex&#39;</span><span class="p">:</span> <span class="n">index</span><span class="p">}</span>
+        <span class="n">ret_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="n">ret_path</span></div>
+
+<div class="viewcode-block" id="BFS"><a class="viewcode-back" href="../../../src.discrete.html#src.discrete.bfs.BFS">[docs]</a><span class="k">class</span> <span class="nc">BFS</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;Class representing a BFS path-finding algorithm </span>
+<span class="sd">    </span>
+<span class="sd">    Args: </span>
+<span class="sd">        payload: input payload </span>
+<span class="sd">    Returns: </span>
+<span class="sd">        bfs (BFS): An instance of the BFS Class</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="n">width</span> <span class="o">=</span>  <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span>
+        <span class="n">step_size</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;step_size&#39;</span><span class="p">]</span>
+        <span class="n">grid_width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">width</span><span class="o">/</span><span class="n">step_size</span><span class="p">)</span>
+        <span class="n">grid_height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="o">/</span><span class="n">step_size</span><span class="p">)</span>
+
+        <span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">goal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s1">&#39;goal&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">goal_radius</span> <span class="o">=</span>  <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;goalRadius&#39;</span><span class="p">]</span>
+        
+        <span class="n">obstacles</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;obstacles&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Define Grid as np arrays </span>
+        <span class="n">visited_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">grid_width</span><span class="p">,</span> <span class="n">grid_height</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">blocked_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">grid_width</span><span class="p">,</span> <span class="n">grid_height</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">goal_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">grid_width</span><span class="p">,</span> <span class="n">grid_height</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">parent_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">grid_width</span><span class="p">,</span> <span class="n">grid_height</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+
+        <span class="c1"># Mark start position</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">step_size</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">step_size</span><span class="p">)]</span>
+        <span class="n">parent_grid</span><span class="p">[</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Mark goal points </span>
+        <span class="n">goal_grid</span> <span class="o">=</span> <span class="n">mark_points_in_Circle</span><span class="p">(</span>  <span class="n">goal_grid</span><span class="p">,</span> 
+                                            <span class="nb">int</span><span class="p">(</span><span class="n">goal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">step_size</span><span class="p">),</span>    
+                                            <span class="nb">int</span><span class="p">(</span><span class="n">goal</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">step_size</span><span class="p">),</span> 
+                                            <span class="nb">int</span><span class="p">(</span><span class="n">goal_radius</span><span class="o">/</span><span class="n">step_size</span><span class="p">))</span>
+        
+        <span class="c1"># Mark blocked points </span>
+        <span class="k">for</span> <span class="n">obstacle</span> <span class="ow">in</span> <span class="n">obstacles</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">obstacle</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;rectangle&quot;</span><span class="p">:</span>
+                <span class="n">obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obstacle</span><span class="p">[</span><span class="s1">&#39;definition&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">step_size</span>
+                <span class="n">blocked_grid</span> <span class="o">=</span> <span class="n">mark_points_in_Rectangle</span><span class="p">(</span><span class="n">blocked_grid</span><span class="p">,</span>
+                                                        <span class="nb">int</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                                                        <span class="nb">int</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                                        <span class="nb">int</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                                                        <span class="nb">int</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+
+            <span class="k">if</span> <span class="n">obstacle</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;circle&quot;</span><span class="p">:</span>
+                <span class="n">cx</span><span class="p">,</span><span class="n">cy</span> <span class="o">=</span> <span class="n">obstacle</span><span class="p">[</span><span class="s1">&#39;definition&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">step_size</span> <span class="p">,</span><span class="n">obstacle</span><span class="p">[</span><span class="s1">&#39;definition&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">step_size</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">obstacle</span><span class="p">[</span><span class="s1">&#39;definition&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mf">1.2</span><span class="p">)</span> <span class="o">/</span> <span class="n">step_size</span><span class="p">)</span>
+                <span class="n">blocked_grid</span> <span class="o">=</span> <span class="n">mark_points_in_Circle</span><span class="p">(</span><span class="n">blocked_grid</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">cx</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">cy</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+        
+
+        <span class="n">start_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start_node</span><span class="p">)</span>
+        <span class="n">visited_order</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">blocked_grid</span> <span class="o">=</span> <span class="n">blocked_grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goal_grid</span> <span class="o">=</span> <span class="n">goal_grid</span>
+
+        <span class="n">path_found</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">path_found</span><span class="p">:</span> 
+
+            <span class="n">node</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># If visited, continue</span>
+            <span class="k">if</span> <span class="n">visited_grid</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="k">continue</span>
+
+            <span class="c1"># Get neighbours    </span>
+            <span class="n">neighbours</span> <span class="o">=</span> <span class="n">get_neighbours</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">parent_grid</span><span class="p">)</span>
+
+            <span class="c1"># Mark visited and add to visited list </span>
+            <span class="n">visited_grid</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">visited_order</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+
+            <span class="c1"># Check if goal </span>
+            <span class="k">if</span> <span class="n">goal_grid</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">]:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">get_path_from_goal</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">parent_grid</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+                <span class="n">path_found</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># For each neighbour </span>
+            <span class="k">for</span> <span class="n">neighbour</span> <span class="ow">in</span> <span class="n">neighbours</span><span class="p">:</span>
+                
+                <span class="n">nx</span> <span class="o">=</span> <span class="n">neighbour</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">ny</span> <span class="o">=</span> <span class="n">neighbour</span><span class="o">.</span><span class="n">y</span>
+
+                <span class="c1"># Check if visited or blocked</span>
+                <span class="k">if</span> <span class="n">blocked_grid</span><span class="p">[</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">]</span> <span class="ow">or</span> <span class="n">visited_grid</span><span class="p">[</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">]:</span> 
+                    <span class="k">continue</span>
+
+                <span class="c1"># Mark parent </span>
+                <span class="n">parent_grid</span><span class="p">[</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">]</span> <span class="o">=</span> <span class="n">neighbour</span><span class="o">.</span><span class="n">parent</span>
+                    
+                <span class="c1"># Add to queue </span>
+                <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbour</span><span class="p">)</span>
+
+        <span class="c1"># Put data into desired format for the front end </span>
+        <span class="n">points_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">visited_order</span><span class="p">:</span> 
+            <span class="n">parent</span> <span class="o">=</span> <span class="n">parent_grid</span><span class="p">[</span><span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+            <span class="k">if</span> <span class="n">parent</span> <span class="o">==</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> 
+                <span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="n">index</span> <span class="o">=</span> <span class="n">visited_order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+            <span class="n">point</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">step_size</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">step_size</span><span class="p">,</span> <span class="s1">&#39;parentIndex&#39;</span><span class="p">:</span> <span class="n">index</span><span class="p">}</span>
+            <span class="n">points_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">points_list</span> <span class="o">=</span> <span class="n">points_list</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Mapping Algorithms.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
