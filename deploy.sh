@@ -5,7 +5,6 @@ cd ..
 
 git checkout gh-pages
 
-git pull 
 
 cp -R docs/_build/html/ ./
 
@@ -13,7 +12,7 @@ git add .
 
 git commit -m "Updating live docs"
 
-git push
+git push -f
 
 git checkout main
 
