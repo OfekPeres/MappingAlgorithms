@@ -149,7 +149,7 @@ class RRT:
         start = np.array(start) 
         goal = np.array(goal)
         dist_to_goal = np.linalg.norm(start - goal)
-        eps = 0.5 # safety margin around obstacle
+        eps = 5 # safety margin around obstacle
         # Continue searching for points until arrival at goal area
         while dist_to_goal > goal_radius: 
             # generate a random point 
