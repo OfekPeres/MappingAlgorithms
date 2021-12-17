@@ -187,7 +187,7 @@ class BFS:
                                             int(goal[0]/step_size),    
                                             int(goal[1]/step_size), 
                                             int(goal_radius/step_size))
-        safety_margin = 10
+        
         # Mark blocked points 
         for obstacle in obstacles: 
             if obstacle['shape'] == "rectangle":
@@ -200,7 +200,7 @@ class BFS:
 
             if obstacle['shape'] == "circle":
                 cx,cy = obstacle['definition'][0] / step_size ,obstacle['definition'][1] / step_size
-                r = np.ceil((obstacle['definition'][2] + safety_margin) / step_size)
+                r = np.ceil((obstacle['definition'][2]*1.2) / step_size)
                 blocked_grid = mark_points_in_Circle(blocked_grid, int(cx), int(cy), int(r))
         
 
