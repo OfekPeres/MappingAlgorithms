@@ -123,10 +123,31 @@ def get_path_from_goal(gx, gy, parent_grid):
 
     while True:
         if parent == [-1]:
-            return path 
+            break 
         path.append(parent)
 
         parent = parent_grid[parent[0], parent[1]]
+
+    return path
+
+    # Make format match rrt 
+
+    # Use list of dictionaries 
+    ret_path = []
+
+    for pt in path: 
+        parent = parent_grid[pt[0], pt[1]]
+
+        if parent == [-1]: 
+            index = -1
+        else: 
+            index = path.index(parent)
+
+        point = {'x': pt[0], 'y': pt[1], 'parentIndex': index}
+        ret_path.append(point)
+
+
+    return ret_path
 
 class BFS:
     '''Class representing a BFS path-finding algorithm 
@@ -186,6 +207,7 @@ class BFS:
 
         nodes = []
         nodes.append(start_node)
+        visited_order = []
 
         self.blocked_grid = blocked_grid
         self.goal_grid = goal_grid
@@ -196,11 +218,15 @@ class BFS:
 
             node = nodes.pop(0)
 
+            # If visited, continue
+            if visited_grid[node.x, node.y] == True: continue
+
             # Get neighbours    
             neighbours = get_neighbours(node, parent_grid)
 
-            # Mark visited
+            # Mark visited and add to visited list 
             visited_grid[node.x, node.y] = True
+            visited_order.append([node.x, node.y])
 
             # Check if goal 
             if goal_grid[node.x, node.y]:
@@ -224,5 +250,19 @@ class BFS:
                 # Add to queue 
                 nodes.append(neighbour)
 
+        # Put data into desired format for the front end 
+        points_list = []
 
+        for pt in visited_order: 
+            parent = parent_grid[pt[0], pt[1]]
+
+            if parent == [-1]: 
+                index = -1
+            else: 
+                index = visited_order.index(parent)
+
+            point = {'x': pt[0], 'y': pt[1], 'parentIndex': index}
+            points_list.append(point)
+
+        self.points_list = points_list
 
