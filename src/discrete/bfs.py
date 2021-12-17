@@ -70,8 +70,8 @@ def mark_points_in_Circle(grid, cx, cy, r):
         grid (numpy array): updated grid 
     '''
     
-    for i in range(cx - r, cx + r + 1):
-        for j in range(cy - r, cy + r + 1):
+    for i in range(cx - r - 1, cx + r + 2):
+        for j in range(cy - r - 1 , cy + r + 2):
 
             # Check in bounds 
             if not in_window(i, j, grid.shape[0], grid.shape[1]):
@@ -79,6 +79,7 @@ def mark_points_in_Circle(grid, cx, cy, r):
 
             if (((i-cx)**2 + (j-cy)**2) <= r**2):
                 grid[i,j] = True
+
 
     return grid
 
@@ -200,7 +201,7 @@ class BFS:
 
             if obstacle['shape'] == "circle":
                 cx,cy = obstacle['definition'][0] / step_size ,obstacle['definition'][1] / step_size
-                r = np.ceil((obstacle['definition'][2]*2) / step_size)
+                r = np.ceil((obstacle['definition'][2]*1.2) / step_size)
                 blocked_grid = mark_points_in_Circle(blocked_grid, int(cx), int(cy), int(r))
         
 
