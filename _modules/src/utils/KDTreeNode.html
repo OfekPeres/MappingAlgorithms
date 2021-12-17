@@ -39,7 +39,9 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../src.html">src package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src.continuous.html">Continuous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src.discrete.html">Discrete</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../src.utils.html">Utilities</a></li>
 </ul>
 
         </div>
@@ -67,17 +69,29 @@
            <div itemprop="articleBody">
              
   <h1>Source code for src.utils.KDTreeNode</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This class implements a KDTreeNode data-structure which is the data-structure of </span>
+<span class="sd">nodes in the KDTree class.</span>
+
+<span class="sd">Helper functions in this class can return the distance to another node, distance to </span>
+<span class="sd">the splitting hyperplane, comparisons (and operators) between nodes. </span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
 <div class="viewcode-block" id="KDTreeNode"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTreeNode.KDTreeNode">[docs]</a><span class="k">class</span> <span class="nc">KDTreeNode</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Args: </span>
+<span class="sd">        point (np.ndarray): the position of the node (x,y)</span>
+<span class="sd">        depth (integer): the depth of the node in the tree</span>
 
+<span class="sd">    Return:</span>
+<span class="sd">        KDTreeNode: An instance of the KDTreeNode class</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Point: The position of the node</span>
-<span class="sd">        depth: the depth of the node in the tree</span>
-<span class="sd">          </span>
-<span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">depth</span>
 
@@ -94,39 +108,94 @@
         <span class="c1"># The index in the kdtree array representation. Only the root node should have a value of -1 as it has no parents</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="mi">0</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">isOnGoalPath</span> <span class="o">=</span> <span class="kc">False</span>
+
 <div class="viewcode-block" id="KDTreeNode.set_depth"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTreeNode.KDTreeNode.set_depth">[docs]</a>    <span class="k">def</span> <span class="nf">set_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span><span class="n">depth</span>
+        <span class="sd">&#39;&#39;&#39;Sets the depth of the node in the tree to the desired depth </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTree): a KDTree object</span>
+<span class="sd">            depth (integer): desired tree depth</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">depth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">depth</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="KDTreeNode.distance_to_node"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTreeNode.KDTreeNode.distance_to_node">[docs]</a>    <span class="k">def</span> <span class="nf">distance_to_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        returns the distance between the current node and the input node</span>
+        <span class="sd">&#39;&#39;&#39;Returns the distance between the current node and the input node </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTreeNode): a KDTreeNode object</span>
+<span class="sd">            other (KDTreeNode): the KDTreeNode object we want to find the distance to</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            float: the euclidean distance between the two nodes </span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">p</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="KDTreeNode.distance_to_point"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTreeNode.KDTreeNode.distance_to_point">[docs]</a>    <span class="k">def</span> <span class="nf">distance_to_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        returns the distance between the current node and the input point </span>
-<span class="sd">        (array)</span>
+        <span class="sd">&#39;&#39;&#39;Returns the distance between the current node and the input node </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTreeNode): a KDTreeNode object</span>
+<span class="sd">            other (np.ndarray): the point we want to find the distance to</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            float: the euclidean distance between the node and the point </span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
+        
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">-</span> <span class="n">other</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="KDTreeNode.distance_to_splitting_plane"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTreeNode.KDTreeNode.distance_to_splitting_plane">[docs]</a>    <span class="k">def</span> <span class="nf">distance_to_splitting_plane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        returns the distance between the current node&#39;s splitting axis </span>
-<span class="sd">        and the input points value at that axis.</span>
-<span class="sd">        i.e. if the splitting plane is the x axis, compare the node&#39;s x value</span>
-<span class="sd">        to the point&#39;s x value</span>
+        <span class="sd">&#39;&#39;&#39;Returns the distance between the current node&#39;s splitting axis </span>
+<span class="sd">        and the input points value at that axis, i.e., if the splitting plane is </span>
+<span class="sd">        the x axis, compare the node&#39;s x value to the point&#39;s x value</span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTreeNode): a KDTreeNode object</span>
+<span class="sd">            other (np.ndarray): the point we want to find the distance to</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            float: the euclidean distance between the point and the splitting axis </span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="n">axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span>
         <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="p">[</span><span class="n">axis</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="KDTreeNode.compare_to_point"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTreeNode.KDTreeNode.compare_to_point">[docs]</a>    <span class="k">def</span> <span class="nf">compare_to_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Computes the difference between the point&#39;s value on the splitting axis </span>
+<span class="sd">        and the current nodes value on that splitting axis. </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTreeNode): a KDTreeNode object</span>
+<span class="sd">            other (np.ndarray): the point we want to compare to</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            float: difference in values between self and other on a particular axis</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="n">axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">-</span> <span class="n">point</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span></div>
 
-
 <div class="viewcode-block" id="KDTreeNode.node_to_dict"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTreeNode.KDTreeNode.node_to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">node_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Returns a dictionary representation of a KDTree Node object </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTreeNode): a KDTreeNode object</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            Dictionary: returns the x position, y position and parent of the KDTreeNode</span>
+<span class="sd">            in a dictionary</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="n">parentIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parentIndex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">index</span>
@@ -136,42 +205,89 @@
             <span class="s2">&quot;parentIndex&quot;</span><span class="p">:</span> <span class="n">parentIndex</span><span class="p">}</span></div>
 
     <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Operator overload for the &lt; (less than)</span>
-<span class="sd">        compares the current node and another node&#39;s values at the dimension of </span>
-<span class="sd">        the other node (i.e. if the other node is at dimension 0, compare the x</span>
-<span class="sd">        values)</span>
+        <span class="sd">&#39;&#39;&#39; Operator overload for the &lt; (less than). Compares the current node and </span>
+<span class="sd">        another node&#39;s values at the dimension of the other node (i.e. if the </span>
+<span class="sd">        other node is at dimension 0, compare the x values) </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTreeNode): a KDTreeNode object</span>
+<span class="sd">            other (KDTree Node): a KDTreeNode object that we want to compare to</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            Boolean: True if self is less than or equal to other, False otherwise</span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="n">axis</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">axis</span>
         <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>
         <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Operator overload for the &gt; (greater than)</span>
-<span class="sd">        compares the current node and another node&#39;s values at the dimension of </span>
-<span class="sd">        this node (i.e. if this node is at dimension 0, compare the )</span>
+        <span class="sd">&#39;&#39;&#39; Operator overload for the &gt; (greater than). Compares the current node and </span>
+<span class="sd">        another node&#39;s values at the dimension of the other node (i.e. if the </span>
+<span class="sd">        other node is at dimension 0, compare the x values) </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTreeNode): a KDTreeNode object</span>
+<span class="sd">            other (KDTree Node): a KDTreeNode object that we want to compare to</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            Boolean: True if self is greater than other, False otherwise</span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="n">axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span>
         <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>
         <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">p</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
     
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Operator overload for the == (equals)</span>
-<span class="sd">        compares the current node and another node&#39;s values at the dimension of </span>
-<span class="sd">        this node (i.e. if this node is at dimension 0, compare the )</span>
+        <span class="sd">&#39;&#39;&#39; Operator overload for the = (equal to). Compares the current node and </span>
+<span class="sd">        another node&#39;s values at the dimension of the other node (i.e. if the </span>
+<span class="sd">        other node is at dimension 0, compare the x values) </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTreeNode): a KDTreeNode object</span>
+<span class="sd">            other (KDTree Node): a KDTreeNode object that we want to compare to</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            Boolean: True if self is equal to other, False otherwise</span>
+
 <span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">p</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; A method to represent the KDTreeNode object as a string when print() is </span>
+<span class="sd">        called on the object</span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTreeNode): a KDTreeNode object</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            String: A string representation of the KDTreeNode</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        
         <span class="k">return</span> <span class="s2">&quot;Point: </span><span class="si">{}</span><span class="s2">, Depth: </span><span class="si">{}</span><span class="s2">, Splitting Axis: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
 
 <div class="viewcode-block" id="KDTreeNode.set_goal_path"><a class="viewcode-back" href="../../../src.utils.html#src.utils.KDTreeNode.KDTreeNode.set_goal_path">[docs]</a>    <span class="k">def</span> <span class="nf">set_goal_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Computes the path from self to every parent until root. This is called on </span>
+<span class="sd">        the goal node to return the path to the goal. It sets every node on the path </span>
+<span class="sd">        as being a part of the Goal Path. </span>
+
+<span class="sd">        Args: </span>
+<span class="sd">            self (KDTreeNode): a KDTreeNode object</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
         <span class="n">cur_node</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">while</span> <span class="n">cur_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cur_node</span><span class="o">.</span><span class="n">isOnGoalPath</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">cur_node</span> <span class="o">=</span> <span class="n">cur_node</span><span class="o">.</span><span class="n">parent</span></div></div>
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">KDTreeNode</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">KDTreeNode</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
