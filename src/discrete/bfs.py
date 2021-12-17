@@ -200,7 +200,7 @@ class BFS:
 
             if obstacle['shape'] == "circle":
                 cx,cy = obstacle['definition'][0] / step_size ,obstacle['definition'][1] / step_size
-                r = np.ceil((obstacle['definition'][2]*1.5) / step_size)
+                r = np.ceil((obstacle['definition'][2]*2) / step_size)
                 blocked_grid = mark_points_in_Circle(blocked_grid, int(cx), int(cy), int(r))
         
 
