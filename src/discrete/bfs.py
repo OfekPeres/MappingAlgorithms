@@ -179,6 +179,7 @@ class BFS:
 
 
         # Mark start position
+        start = [int(start[0]/step_size), int(start[1]/step_size)]
         parent_grid[start[0], start[1]] = [-1]
 
         # Mark goal points 
